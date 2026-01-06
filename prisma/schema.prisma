@@ -1,0 +1,565 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// ENUMS
+// ========================================
+
+enum Category {
+  FOOD
+  ACCOMMODATION
+}
+
+enum Status {
+  PENDING //Rascunho - empresa cadastrou mas sem aprovação
+  APPROVED // Aprovado pela prefeitura e visível no site público
+  REJECTED // Rejeitado pela prefeitura
+}
+
+enum AgencyType {
+  AGENCY // Agência de turismo
+  GUIDE // Guia autônomo
+}
+
+enum UserRole {
+  ADMIN // Prefeitura - acesso total
+  MODERATOR // Prefeitura - pode aprovar/rejeitar
+  BUSINESS_FOOD // Empresa Alimentícia
+  BUSINESS_ACCOMMODATION // Empresa de Hospedagem
+  GUIDE // Guia/Agência - gerencia perfil e passeios
+}
+
+enum VisitorProfile {
+  FAMILY_OR_FRIENDS
+  SCHOOL
+  TOUR_GROUP
+  TECHNICAL_VISIT
+  SOCIAL_PROJECT
+  OTHER
+}
+
+enum AccommodationType {
+  OWN_HOUSE
+  HOTEL
+  FRIENDS_OR_FAMILY
+  HOSTEL
+  FLAT
+  RESORT
+  AIRBNB
+  OTHER
+}
+
+enum UsefulInfoCategory {
+  EMERGENCY // Emergências (polícia, bombeiros, hospital)
+  USEFUL // Informações úteis (correios, bancos)
+  SERVICES // Serviços públicos (prefeitura, cartório)
+}
+
+enum CommonPageName {
+  RODOVIAS // Condições das Estradas
+  PRIVACIDADE // Política de Privacidade
+  AGENCIES // Agências Credenciadas
+  CAD_ESTAB // Cadastre o seu Estabelecimento
+  CAD_GUIA // Cadastro de Guia de turismo
+  TEMPO // Previsão do Tempo
+  TRANSPORTE // Transporte Municipal e Intermunicipal
+  OBSERVATORY // Observatório do Turismo
+  MARRIAGE // Casamento Coletivo
+  VEHICLE // Estacionamento
+  COMTUR // Conselho Municipal de Turismo
+  INFOS // Informações Gerais
+  HOME // Página Inicial
+  DOWNLOAD // Downloads
+  USEFULLINFO // Informações Úteis
+  BEACH // Praias
+  BUSINESS_FOOD // Gastronomia
+  BUSINESS_ACCOMMODATION // Hospedagem
+  GUIDE // Guias
+  TOUR // Passeios
+  EVENTS // Eventos
+  NEWS // Notícias
+}
+
+enum DownloadCategory {
+  DOWNLOAD // Download
+  OBSERVATORY // Observatório
+}
+
+enum AgeRange {
+  ZERO_TO_NINE
+  TEN_TO_EIGHTEEN
+  NINETEEN_TO_TWENTY_NINE
+  THIRTY_TO_FORTY_FIVE
+  FORTY_SIX_TO_SIXTY_FIVE
+  OVER_SIXTY_FIVE
+}
+
+// ========================================
+// AUTENTICAÇÃO
+// ========================================
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  name          String
+  role          UserRole @default(BUSINESS_FOOD)
+  first_login   Boolean  @default(false) // True = precisa redefinir senha (apenas ADMIN)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relacionamentos
+  businesses Business[]
+  agencies   Agency[]
+  accounts   Account[]
+  sessions   Session[]
+
+  @@map("users")
+}
+
+// NextAuth - Tabelas de sessão
+model Account {
+  id                  String  @id @default(uuid())
+  user_id             String
+  type                String
+  provider            String
+  provider_account_id String
+  refresh_token       String? @db.Text
+  access_token        String? @db.Text
+  expires_at          Int?
+  token_type          String?
+  scope               String?
+  id_token            String? @db.Text
+  session_state       String?
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([provider, provider_account_id])
+  @@map("accounts")
+}
+
+model Session {
+  id            String   @id @default(uuid())
+  session_token String   @unique
+  user_id       String
+  expires       DateTime
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ========================================
+// NEGÓCIOS (Alimentação + Acomodação)
+// ========================================
+
+model Business {
+  id                 String   @id @default(uuid())
+  name               String
+  address_street     String
+  address_number     String
+  address_district   String
+  address_complement String?
+  phone_primary      String
+  phone_secondary    String?
+  details            String?  @db.Text
+  website            String?
+  cnpj_cpf           String   @db.VarChar(14)
+  category           Category
+  instagram          String?
+  facebook           String?
+  link_menu          String?
+  coupon             String?
+  status             Status   @default(PENDING)
+  status_details     String?  @db.Text // Justificativa de rejeição ou observações
+  images             String[] @default([]) // Array de URLs das imagens (banners)
+  cadastur           String
+
+  // Controle de versões quando empresa edita após aprovação
+  has_pending_update Boolean @default(false) // Se true, existe uma versão pendente sendo avaliada
+  pending_version_id String? @unique // ID da versão pendente (se houver)
+
+  // Relacionamentos
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  tags BusinessTag[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([user_id])
+  @@index([has_pending_update])
+  @@map("businesses")
+}
+
+// ========================================
+// TAGS
+// ========================================
+
+model Tag {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  category   Category // Tag específica para FOOD ou ACCOMMODATION
+  icon       String? // Nome do ícone (Lucide)
+  created_at DateTime @default(now())
+
+  businesses BusinessTag[]
+
+  @@index([category])
+  @@map("tags")
+}
+
+// Relacionamento N-N entre Business e Tags
+model BusinessTag {
+  business_id String
+  tag_id      String
+
+  business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+  tag      Tag      @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([business_id, tag_id])
+  @@map("business_tags")
+}
+
+// ========================================
+// AGÊNCIAS E GUIAS
+// ========================================
+
+model Agency {
+  id                 String     @id @default(uuid())
+  name               String
+  type               AgencyType
+  email              String
+  phone_primary      String
+  phone_secondary    String?
+  address_street     String
+  address_number     String
+  address_district   String
+  address_complement String?
+  cnpj_cpf           String     @db.VarChar(14)
+  credential         String // Cadastur ou credencial profissional
+  website            String?
+  instagram          String?
+  facebook           String?
+  details            String?    @db.Text
+  image              String? // Foto de perfil/logo
+  images             String[]   @default([]) // Fotos adicionais
+  status             Status     @default(PENDING)
+  status_details     String?    @db.Text
+
+  // Controle de versões quando agência edita após aprovação
+  has_pending_update Boolean @default(false)
+  pending_version_id String? @unique
+
+  // Relacionamentos
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  tags            AgencyTag[]
+  tours           Tour[]      @relation("TourGuide")
+  auxiliary_tours Tour[]      @relation("TourAuxiliaryGuide")
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([status])
+  @@index([type])
+  @@index([user_id])
+  @@index([has_pending_update])
+  @@map("agencies")
+}
+
+// Tag para Agências e Guias
+model AgencyTagModel {
+  id         String     @id @default(uuid())
+  name       String     @unique
+  type       AgencyType // Tag específica para AGENCY ou GUIDE
+  icon       String? // Nome do ícone (Lucide)
+  created_at DateTime   @default(now())
+
+  agencies AgencyTag[]
+
+  @@index([type])
+  @@map("agency_tags_model")
+}
+
+// Relacionamento N-N entre Agency e AgencyTags
+model AgencyTag {
+  agency_id String
+  tag_id    String
+
+  agency Agency         @relation(fields: [agency_id], references: [id], onDelete: Cascade)
+  tag    AgencyTagModel @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([agency_id, tag_id])
+  @@map("agency_tags")
+}
+
+// ========================================
+// PASSEIOS
+// ========================================
+
+model Tour {
+  id                 String            @id @default(uuid())
+  guide_id           String
+  auxiliary_guide_id String? // Caso tenha um guia auxiliar
+  date_time          DateTime
+  address            String
+  visitor_profile    VisitorProfile
+  accommodation_type AccommodationType
+  request_date       Int
+  stay_days          Int
+  age_range          AgeRange
+  status             Status            @default(PENDING)
+  status_details     String?           @db.Text
+
+  // Relacionamentos
+  guide           Agency  @relation("TourGuide", fields: [guide_id], references: [id], onDelete: Cascade)
+  auxiliary_guide Agency? @relation("TourAuxiliaryGuide", fields: [auxiliary_guide_id], references: [id], onDelete: SetNull)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([guide_id])
+  @@index([auxiliary_guide_id])
+  @@index([status])
+  @@index([date_time])
+  @@map("tours")
+}
+
+// ========================================
+// PASSEIOS (TEMPLATES)
+// ========================================
+
+// Cadastro de passeios pelo admin (templates)
+model TourTemplate {
+  id             String   @id @default(uuid())
+  name           String   @unique
+  description    String?  @db.Text
+  images         String[] @default([])
+  requires_guide Boolean  @default(false)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@index([requires_guide])
+  @@map("tour_templates")
+}
+
+// ========================================
+// PRAIAS
+// ========================================
+
+model Beach {
+  id               String   @id @default(uuid())
+  name             String
+  address_district String // Bairro para filtro
+  details          String?  @db.Text // Editor rico
+  images           String[] // Array de URLs
+  status           Status   @default(PENDING)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  tags BeachTag[]
+
+  @@index([status])
+  @@index([address_district])
+  @@map("beaches")
+}
+
+// Tag para Praias
+model BeachTagModel {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  icon       String? // Nome do ícone (Lucide)
+  created_at DateTime @default(now())
+
+  beaches BeachTag[]
+
+  @@map("beach_tags_model")
+}
+
+// Relacionamento N-N entre Beach e BeachTags
+model BeachTag {
+  beach_id String
+  tag_id   String
+
+  beach Beach         @relation(fields: [beach_id], references: [id], onDelete: Cascade)
+  tag   BeachTagModel @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([beach_id, tag_id])
+  @@map("beach_tags")
+}
+
+// ========================================
+// BAIRROS
+// ========================================
+
+model District {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("districts")
+}
+
+// ========================================
+// REDES SOCIAIS
+// ========================================
+
+model SocialMedia {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  link       String
+  icon       String // Nome do ícone (ex: "facebook", "instagram", "twitter")
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("social_media")
+}
+
+// ========================================
+// NOTÍCIAS
+// ========================================
+
+model News {
+  id         String   @id @default(uuid())
+  title      String
+  content    String   @db.Text
+  image      String
+  author     String?
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("news")
+}
+
+// ========================================
+// ESTACIONAMENTOS CREDENCIADOS
+// ========================================
+
+model Parking {
+  id               String   @id @default(uuid())
+  company          String
+  address          String
+  address_district String
+  van              Boolean  @default(false)
+  micro            Boolean  @default(false)
+  onibus           Boolean  @default(false)
+  phone            String
+  email            String
+  route_link       String
+  active           Boolean  @default(true)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("parkings")
+}
+
+// ========================================
+// EVENTOS DA CIDADE
+// ========================================
+
+model Event {
+  id         String   @id @default(uuid())
+  name       String
+  date       DateTime
+  location   String
+  details    String?  @db.Text
+  images     String[]
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("events")
+}
+
+// ========================================
+// INFORMAÇÕES ÚTEIS
+// ========================================
+
+model UsefulInfo {
+  id         String             @id @default(uuid())
+  name       String
+  phone      String
+  address    String?
+  website    String?
+  email      String?
+  category   UsefulInfoCategory
+  active     Boolean            @default(true)
+  created_at DateTime           @default(now())
+  updated_at DateTime           @updatedAt
+
+  @@map("useful_info")
+}
+
+// ========================================
+// DEPARTAMENTOS DA CIDADE
+// ========================================
+
+model CityDepartment {
+  id         String   @id @default(uuid())
+  department String
+  phone      String
+  address    String
+  website    String?
+  email      String?
+  hours      String?
+  details    String?  @db.Text
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("city_departments")
+}
+
+// ========================================
+// PÁGINAS EDITÁVEIS
+// ========================================
+
+model CommonPage {
+  id             String         @id @default(uuid())
+  title          String
+  video          String?
+  images         String[]
+  details        String         @db.Text
+  page           CommonPageName @unique
+  active         Boolean        @default(true)
+  only_footer    Boolean        @default(false)
+  visible_header Boolean        @default(false)
+  link_externo   String?
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+
+  @@map("common_pages")
+}
+
+// ========================================
+// DOWNLOADS
+// ========================================
+
+model Download {
+  id         String           @id @default(uuid())
+  name       String
+  category   DownloadCategory
+  link       String
+  active     Boolean          @default(true)
+  created_at DateTime         @default(now())
+  updated_at DateTime         @updatedAt
+
+  @@map("downloads")
+}

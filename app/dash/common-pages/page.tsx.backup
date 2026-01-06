@@ -1,0 +1,308 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { FileText, Plus, Edit, CheckCircle, XCircle, Search } from 'lucide-react'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import TablePagination from '@/components/TablePagination'
+
+type CommonPage = {
+  id: string
+  title: string
+  video: string | null
+  images: string[]
+  details: string
+  page: string
+  active: boolean
+}
+
+export default function CommonPagesListPage() {
+  const [pages, setPages] = useState<CommonPage[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState('ALL')
+  const [pageFilter, setPageFilter] = useState('ALL')
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const itemsPerPage = 10
+
+  useEffect(() => {
+    fetchPages()
+  }, [])
+
+  const fetchPages = async () => {
+    try {
+      const response = await fetch('/api/common-pages?dashboard=true', {
+        credentials: 'include',
+      })
+      if (!response.ok) throw new Error()
+      const data = await response.json()
+      setPages(data)
+    } catch (error) {
+      console.error('Erro ao carregar páginas:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getPageLabel = (page: string) => {
+    const labels: Record<string, string> = {
+      OBSERVATORY: 'Observatório do Turismo',
+      MARRIAGE: 'Casamento Coletivo',
+      VEHICLE: 'Estacionamento',
+      COMTUR: 'Conselho Municipal de Turismo',
+      INFOS: 'Informações Gerais',
+      HOME: 'Página Inicial',
+      DOWNLOAD: 'Downloads',
+      USEFULLINFO: 'Informações Úteis',
+      BEACH: 'Praias',
+      BUSINESS_FOOD: 'Gastronomia',
+      BUSINESS_ACCOMMODATION: 'Hospedagem',
+      GUIDE: 'Guias',
+      TOUR: 'Passeios',
+      EVENTS: 'Eventos',
+      NEWS: 'Notícias',
+    }
+    return labels[page] || page
+  }
+
+  const getPageColor = (page: string) => {
+    const colors: Record<string, string> = {
+      OBSERVATORY: 'bg-purple-100 text-purple-800',
+      MARRIAGE: 'bg-pink-100 text-pink-800',
+      VEHICLE: 'bg-orange-100 text-orange-800',
+      COMTUR: 'bg-teal-100 text-teal-800',
+      INFOS: 'bg-blue-100 text-blue-800',
+      HOME: 'bg-green-100 text-green-800',
+      DOWNLOAD: 'bg-indigo-100 text-indigo-800',
+      USEFULLINFO: 'bg-yellow-100 text-yellow-800',
+      BEACH: 'bg-cyan-100 text-cyan-800',
+      BUSINESS_FOOD: 'bg-red-100 text-red-800',
+      BUSINESS_ACCOMMODATION: 'bg-violet-100 text-violet-800',
+      GUIDE: 'bg-amber-100 text-amber-800',
+      TOUR: 'bg-lime-100 text-lime-800',
+      EVENTS: 'bg-fuchsia-100 text-fuchsia-800',
+      NEWS: 'bg-slate-100 text-slate-800',
+    }
+    return colors[page] || 'bg-gray-100 text-gray-800'
+  }
+
+  const totalPagesItems = pages.length
+  const activePages = pages.filter((p) => p.active).length
+  const inactivePages = pages.filter((p) => !p.active).length
+
+  // Filtrar páginas
+  const filteredPages = pages.filter(page => {
+    const matchesSearch = page.title.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === 'ALL' ||
+      (statusFilter === 'ACTIVE' && page.active) ||
+      (statusFilter === 'INACTIVE' && !page.active)
+    const matchesPage = pageFilter === 'ALL' || page.page === pageFilter
+    return matchesSearch && matchesStatus && matchesPage
+  })
+
+  const totalItems = filteredPages.length
+  const totalPagesCount = Math.ceil(totalItems / itemsPerPage)
+  const paginatedPages = filteredPages.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  if (loading) {
+    return <LoadingSpinner message="Carregando páginas..." />
+  }
+
+  return (
+    <div className="p-4 md:p-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 md:mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Páginas do Site</h1>
+        </div>
+        <Link
+          href="/dash/common-pages/new"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          <Plus className="w-5 h-5" />
+          Nova Página
+        </Link>
+      </div>
+
+      {/* Estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 md:mb-8">
+        <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total</p>
+              <p className="text-2xl font-bold text-blue-700">{totalPagesItems}</p>
+            </div>
+            <FileText className="w-8 h-8 text-blue-600" />
+          </div>
+        </div>
+
+        <div className="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Ativos</p>
+              <p className="text-2xl font-bold text-green-700">{activePages}</p>
+            </div>
+            <CheckCircle className="w-8 h-8 text-green-600" />
+          </div>
+        </div>
+
+        <div className="bg-red-50 rounded-lg p-4 border-2 border-red-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Inativos</p>
+              <p className="text-2xl font-bold text-red-700">{inactivePages}</p>
+            </div>
+            <XCircle className="w-8 h-8 text-red-600" />
+          </div>
+        </div>
+      </div>
+
+      {/* Filtros */}
+      <div className="bg-white rounded-lg shadow mb-6 p-4 md:p-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Buscar por título..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <select
+            value={pageFilter}
+            onChange={(e) => {
+              setPageFilter(e.target.value)
+              setCurrentPage(1)
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="ALL">Todas as páginas</option>
+            <option value="HOME">Página Inicial</option>
+            <option value="OBSERVATORY">Observatório do Turismo</option>
+            <option value="MARRIAGE">Casamento Coletivo</option>
+            <option value="VEHICLE">Estacionamento</option>
+            <option value="COMTUR">Conselho Municipal de Turismo</option>
+            <option value="INFOS">Informações Gerais</option>
+            <option value="DOWNLOAD">Downloads</option>
+            <option value="USEFULLINFO">Informações Úteis</option>
+            <option value="BEACH">Praias</option>
+            <option value="BUSINESS_FOOD">Gastronomia</option>
+            <option value="BUSINESS_ACCOMMODATION">Hospedagem</option>
+            <option value="GUIDE">Guias</option>
+            <option value="TOUR">Passeios</option>
+            <option value="EVENTS">Eventos</option>
+            <option value="NEWS">Notícias</option>
+          </select>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value)
+              setCurrentPage(1)
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="ALL">Todos os status</option>
+            <option value="ACTIVE">Ativos</option>
+            <option value="INACTIVE">Inativos</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Tabela */}
+      {filteredPages.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <FileText className="w-16 h-16 text-gray-400 mb-4" />
+          <p className="text-gray-600 text-lg font-medium">Nenhuma página encontrada</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {searchTerm || statusFilter !== 'ALL' || pageFilter !== 'ALL' ? 'Tente ajustar os filtros' : 'Clique em "Nova Página" para adicionar'}
+          </p>
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPagesCount}
+            totalItems={totalItems}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+          />
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Título
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Página
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Imagens
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {paginatedPages.map((page) => (
+                  <tr key={page.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-gray-900">{page.title}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPageColor(
+                          page.page
+                        )}`}
+                      >
+                        {getPageLabel(page.page)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {page.images.length} imagem{page.images.length > 1 ? 'ns' : ''}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${page.active
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}
+                      >
+                        {page.active ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Link
+                        href={`/dash/common-pages/${page.id}`}
+                        className="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded transition inline-flex items-center justify-center"
+                        title="Editar"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
