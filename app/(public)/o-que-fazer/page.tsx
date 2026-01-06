@@ -85,21 +85,8 @@ export default function OQueFazerPage() {
     }
   })
 
-  const {
-    data: tags = [],
-    isLoading: isLoadingTags,
-    isError: isErrorTags
-  } = useQuery({
-    queryKey: ['tags-tour'],
-    queryFn: async () => {
-      const res = await fetch('/api/tags?category=TOUR')
-      if (!res.ok) throw new Error('Erro ao buscar tags')
-      const data = await res.json()
-      return data.filter((t: any) => t.active)
-    }
-  })
 
-  // ...existing code...
+
 
   // Filtrar passeios
   interface FilteredTour extends TourTemplate { }
@@ -145,12 +132,12 @@ export default function OQueFazerPage() {
   }
 
   // Skeleton loading for progressive UX
-  if (isLoadingPage || isLoadingTours || isLoadingDistricts || isLoadingTags) {
+  if (isLoadingPage || isLoadingTours || isLoadingDistricts) {
     return <SectionSkeleton />
   }
 
   // Error states
-  if (isErrorPage || isErrorTours || isErrorDistricts || isErrorTags) {
+  if (isErrorPage || isErrorTours || isErrorDistricts) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -188,7 +175,7 @@ export default function OQueFazerPage() {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         districts={districts}
-        tags={tags}
+        tags={[]}
         selectedDistricts={selectedBairros}
         selectedTags={selectedTags}
         onToggleDistrict={toggleBairro}

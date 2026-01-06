@@ -59,7 +59,8 @@ export default function TodasPraiasPage() {
     queryFn: async () => {
       const res = await fetch('/api/beaches')
       if (!res.ok) throw new Error('Erro ao buscar praias')
-      return res.json()
+      const data = await res.json()
+      return data
     },
     staleTime: 1000 * 60 * 10,
 
@@ -81,19 +82,17 @@ export default function TodasPraiasPage() {
   const { data: tags, isLoading: loadingTags } = useQuery({
     queryKey: ['beach-tags'],
     queryFn: async () => {
-      const res = await fetch('/api/tags?category=BEACH')
+      const res = await fetch('/api/beach-tags')
       if (!res.ok) throw new Error('Erro ao buscar tags')
-      return (await res.json()).filter((t: any) => t.active)
+      const data = await res.json()
+      return data
     },
     staleTime: 1000 * 60 * 10,
-
     refetchOnWindowFocus: false,
   })
+
   const [sortOption, setSortOption] = useState('relevance')
   const itemsPerPage = 12
-
-
-
 
   // Filtrar praias
   let filteredBeaches = Array.isArray(beaches)
