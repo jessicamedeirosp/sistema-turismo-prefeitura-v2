@@ -173,7 +173,7 @@ export default function TodasPraiasPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {beachPageData && (
-        <DetailBanner title={beachPageData.title} images={beachPageData.images} details={beachPageData.details} />
+        <DetailBanner title={beachPageData.title} images={beachPageData.images} />
       )}
 
       <FilterBar

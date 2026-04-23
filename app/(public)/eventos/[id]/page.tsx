@@ -71,7 +71,7 @@ export default function EventoDetalhePage() {
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">{event.name}</h1>
         <div className="text-xs text-gray-500 mb-6">{new Date(event.date).toLocaleDateString()} - {event.location}</div>
         {event && (
-          <DetailBanner title={event.name} images={event.images} details={event.details} />
+          <DetailBanner title={event.name} images={event.images} />
         )}
 
         {event.details && (

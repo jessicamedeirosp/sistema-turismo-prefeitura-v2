@@ -31,7 +31,7 @@ export default function OndeFicarDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <DetailBanner title={data.name} images={data.images} details={""} />
+      <DetailBanner title={data.name} images={data.images} />
       <section className="container mx-auto px-4 py-10 max-w-3xl">
         <div className="mb-6">
           <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">{data.name}</h1>

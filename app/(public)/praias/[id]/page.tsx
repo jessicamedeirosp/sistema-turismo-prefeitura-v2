@@ -113,7 +113,7 @@ export default function PraiaDetalhePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {beach && (<DetailBanner title={beach.name} images={beach.images} details={beach.details} />)}
+      {beach && (<DetailBanner title={beach.name} images={beach.images} />)}
       <section className="container mx-auto px-4 py-10 max-w-3xl">
         <div className="mb-6">
           <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">{beach.name}</h1>
