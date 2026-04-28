@@ -22,6 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         address_complement: true,
         cnpj_cpf: true,
         cadastur: true,
+        coupon: true,
         tags: {
           select: {
             tag: { select: { id: true, name: true, icon: true } }

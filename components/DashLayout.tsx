@@ -23,6 +23,7 @@ import {
   Info,
   FileText,
   Download,
+  Image,
 } from 'lucide-react'
 import { useState } from 'react'
 import { canManageBusinesses, canManageAgencies, canManageBeaches, canManageTags, canManageTours, UserRole } from '@/lib/permissions'
@@ -82,6 +83,12 @@ const adminMenuItems: MenuItem[] = [
     label: 'Redes Sociais',
     href: '/dash/social-media',
     icon: Share2,
+    checkPermission: (role: UserRole) => role === 'ADMIN',
+  },
+  {
+    label: 'Branding do Site',
+    href: '/dash/site-branding',
+    icon: Image,
     checkPermission: (role: UserRole) => role === 'ADMIN',
   },
   {

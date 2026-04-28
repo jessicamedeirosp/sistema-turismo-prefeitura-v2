@@ -124,9 +124,9 @@ export default function InformacoesUteisPage() {
       {/* Descrição */}
       <section className="py-8">
         <div className="container mx-auto px-4">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          {pageData?.details && <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: pageData?.details || '' }} />
-          </div>
+          </div>}
           {/* Cards de informações úteis */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredInfos.length === 0 && (

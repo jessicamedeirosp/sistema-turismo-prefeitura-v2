@@ -11,6 +11,7 @@ interface ImageUploadProps {
   maxImages?: number
   title?: string
   description?: string
+  onUploadingChange?: (isUploading: boolean) => void
 }
 
 export default function ImageUpload({
@@ -19,6 +20,7 @@ export default function ImageUpload({
   maxImages = 10,
   title = 'Imagens',
   description = 'Adicione fotos do estabelecimento. Primeira imagem será a capa.',
+  onUploadingChange,
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
 
@@ -42,6 +44,7 @@ export default function ImageUpload({
     }
 
     setIsUploading(true)
+    onUploadingChange?.(true)
     try {
       const formData = new FormData()
       formData.append('file', file)
@@ -71,6 +74,7 @@ export default function ImageUpload({
       toast.error('Erro ao enviar imagem')
     } finally {
       setIsUploading(false)
+      onUploadingChange?.(false)
       // Reset input
       e.target.value = ''
     }

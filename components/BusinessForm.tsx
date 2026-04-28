@@ -428,6 +428,7 @@ export default function BusinessForm({ mode, businessId, userRole, onLoadingChan
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Telefone Principal *
             </label>
+
             <input
               {...register('phone_primary')}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -436,6 +437,9 @@ export default function BusinessForm({ mode, businessId, userRole, onLoadingChan
             {errors.phone_primary && (
               <p className="text-red-600 text-sm mt-1">{errors.phone_primary.message}</p>
             )}
+            <p className="text-xs text-gray-600 mb-2">
+              Este será o telefone principal exibido no site e deve ser um número com WhatsApp.
+            </p>
           </div>
 
           <div>

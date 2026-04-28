@@ -528,6 +528,20 @@ model CityDepartment {
 }
 
 // ========================================
+// BRANDING DO SITE (Header + Rodapé)
+// ========================================
+model SiteBranding {
+  id                 String   @id @default(uuid())
+  header_logo         String
+  header_logo_in_footer Boolean @default(false)
+  footer_images       String[] @default([])
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@map("site_branding")
+}
+
+// ========================================
 // PÁGINAS EDITÁVEIS
 // ========================================
 

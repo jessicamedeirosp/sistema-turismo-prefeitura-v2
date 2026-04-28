@@ -51,6 +51,12 @@ export default function Footer() {
   const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([])
   const [departments, setDepartments] = useState<CityDepartment[]>([])
   const [footerPages, setFooterPages] = useState<FooterPage[]>([])
+  const [footerImages, setFooterImages] = useState<string[]>([
+    '/observatorio-turismo.png',
+    '/setur-prefeitura.png',
+  ])
+  const [headerLogo, setHeaderLogo] = useState<string>('/logo-menu.png')
+  const [headerLogoInFooter, setHeaderLogoInFooter] = useState(false)
 
   useEffect(() => {
     fetchFooterData()
@@ -59,6 +65,14 @@ export default function Footer() {
 
   const fetchFooterData = async () => {
     try {
+      const brandingRes = await fetch('/api/public/site-branding')
+      if (brandingRes.ok) {
+        const brandingData = await brandingRes.json()
+        if (Array.isArray(brandingData?.footer_images)) setFooterImages(brandingData.footer_images)
+        if (brandingData?.header_logo) setHeaderLogo(brandingData.header_logo)
+        setHeaderLogoInFooter(!!brandingData?.header_logo_in_footer)
+      }
+
       // Buscar redes sociais
       const socialRes = await fetch('/api/public/social-media')
       if (socialRes.ok) {
@@ -168,12 +182,25 @@ export default function Footer() {
           </div>
           {/* Imagens institucionais */}
           <div className="flex justify-center items-center gap-4 my-8">
-            <img src="/observatorio-turismo.png" alt="Observatório de Turismo" style={{ height: 80, width: 'auto', maxWidth: '100%' }} />
-            <img src="/setur-prefeitura.png" alt="SETUR Prefeitura São Sebastião" style={{ height: 80, width: 'auto', maxWidth: '100%' }} />
+            {headerLogoInFooter && headerLogo && (
+              <img
+                src={headerLogo}
+                alt="Logo"
+                style={{ height: 80, width: 'auto', maxWidth: '100%' }}
+              />
+            )}
+            {footerImages.map((src) => (
+              <img
+                key={src}
+                src={src}
+                alt="Imagem institucional"
+                style={{ height: 80, width: 'auto', maxWidth: '100%' }}
+              />
+            ))}
           </div>
         </div>
         <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
-          © 2025 Portal de Turismo. Todos os direitos reservados. Desenvolvido por <a href="https://www.linkedin.com/in/jessicapoçarli" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Jéssica Medeiros Poçarli</a>
+          © 2025 Portal de Turismo. Todos os direitos reservados. Desenvolvido por <a href="https://www.linkedin.com/in/jessicamedeirospocarli/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Jéssica Medeiros Poçarli</a>
         </div>
 
       </footer>

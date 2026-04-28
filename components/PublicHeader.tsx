@@ -23,6 +23,7 @@ interface PublicHeaderProps {
 export default function PublicHeader({ showBackButton = false }: PublicHeaderProps) {
   const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([])
   const [menuPages, setMenuPages] = useState<MenuItem[]>([])
+  const [logoSrc, setLogoSrc] = useState('/logo-menu.png')
 
   useEffect(() => {
     fetchHeaderData()
@@ -30,6 +31,16 @@ export default function PublicHeader({ showBackButton = false }: PublicHeaderPro
 
   const fetchHeaderData = async () => {
     try {
+      const brandingRes = await fetch('/api/public/site-branding')
+      if (brandingRes.ok) {
+        const brandingData = await brandingRes.json()
+        const nextLogo =
+          typeof brandingData?.header_logo === 'string' && brandingData.header_logo.trim().length > 0
+            ? brandingData.header_logo
+            : '/logo-menu.png'
+        setLogoSrc(nextLogo)
+      }
+
       // Buscar redes sociais
       const socialRes = await fetch('/api/public/social-media')
       if (socialRes.ok) {
@@ -63,7 +74,7 @@ export default function PublicHeader({ showBackButton = false }: PublicHeaderPro
             <div className="flex items-center justify-between py-3">
               <a href="/" className="flex items-center">
                 <img
-                  src="/logo-menu.png"
+                  src={logoSrc}
                   alt="São Sebastião Turismo"
                   className="h-16 w-auto"
                 />
@@ -84,7 +95,7 @@ export default function PublicHeader({ showBackButton = false }: PublicHeaderPro
   return (
     <>
       <TopBar socialMedia={socialMedia} />
-      <MainHeader menuPages={menuPages} />
+      <MainHeader menuPages={menuPages} logoSrc={logoSrc} />
     </>
   )
 }

@@ -10,9 +10,10 @@ interface MenuItem {
 
 interface MainHeaderProps {
   menuPages: MenuItem[]
+  logoSrc?: string
 }
 
-export default function MainHeader({ menuPages }: MainHeaderProps) {
+export default function MainHeader({ menuPages, logoSrc = '/logo-menu.png' }: MainHeaderProps) {
 
   const pageSlugMap: Record<string, string> = {
     HOME: '/',
@@ -46,7 +47,7 @@ export default function MainHeader({ menuPages }: MainHeaderProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo-menu.png"
+              src={logoSrc}
               alt="São Sebastião Turismo"
               width={240}
               height={80}
