@@ -42,7 +42,7 @@ const DetailBanner: React.FC<DetailBannerProps> = ({ title, details, images, chi
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
           <div className="p-6 rounded-lg text-white text-center max-w-2xl mx-auto">
             {title && <h1 className="text-4xl md:text-5xl font-bold mb-2">{title}</h1>}
-            {details && <p className="text-base md:text-lg" dangerouslySetInnerHTML={{ __html: details }} />}
+            {/* {details && <p className="text-base md:text-lg" dangerouslySetInnerHTML={{ __html: details }} />} */}
           </div>
         </div>
       )}

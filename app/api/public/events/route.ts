@@ -3,15 +3,11 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    // Buscar eventos ativos e futuros
+    // Buscar todos eventos ativos
     const now = new Date()
-
     const allEvents = await prisma.event.findMany({
       where: {
         active: true,
-        date: {
-          gte: now,
-        },
       },
       select: {
         id: true,
@@ -25,9 +21,15 @@ export async function GET() {
       },
     })
 
-    // Randomizar e pegar apenas 4
-    const shuffled = allEvents.sort(() => 0.5 - Math.random())
-    const events = shuffled.slice(0, 4)
+    // Separar futuros e passados
+    const futureEvents = allEvents.filter(e => new Date(e.date) >= now)
+    const pastEvents = allEvents.filter(e => new Date(e.date) < now)
+
+    // Ordenar futuros (asc), passados (desc)
+    futureEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    pastEvents.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+    const events = [...futureEvents, ...pastEvents]
 
     return NextResponse.json(events)
   } catch (error) {

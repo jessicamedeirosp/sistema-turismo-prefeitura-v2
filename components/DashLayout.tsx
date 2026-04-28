@@ -109,6 +109,12 @@ const adminMenuItems: MenuItem[] = [
     checkPermission: (role: UserRole) => role === 'ADMIN',
   },
   {
+    label: 'Departamentos',
+    href: '/dash/city-departments',
+    icon: Briefcase,
+    checkPermission: (role: UserRole) => role === 'ADMIN',
+  },
+  {
     label: 'Informações Úteis',
     href: '/dash/useful-info',
     icon: Info,
