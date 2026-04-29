@@ -34,6 +34,7 @@ export default function CommonPageFormPage() {
   const [loadingData, setLoadingData] = useState(false)
   const [detailsContent, setDetailsContent] = useState('')
   const [images, setImages] = useState<string[]>([])
+  const [imagesError, setImagesError] = useState('')
 
   const {
     register,
@@ -84,6 +85,15 @@ export default function CommonPageFormPage() {
   const watchedVisibleInHeader = watch('visibleInHeader');
   const watchedVisibleInFooter = watch('visibleInFooter');
   const onSubmit = async (data: CommonPageFormData) => {
+    setImagesError('')
+
+    if (data.page === 'TOUR' && images.length === 0) {
+      const message = 'Imagem é obrigatória para páginas de Passeios'
+      setImagesError(message)
+      toast.error(message)
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -229,7 +239,11 @@ export default function CommonPageFormPage() {
             </label>
             <ImageUpload
               images={images}
-              onImagesChange={setImages}
+              onImagesChange={(newImages) => {
+                setImages(newImages)
+                if (newImages.length > 0) setImagesError('')
+              }}
+              error={imagesError}
               maxImages={10}
             />
             {images.length > 0 && (
@@ -311,7 +325,7 @@ export default function CommonPageFormPage() {
         </div>
 
         {/* Ações */}
-        <div className="flex items-center justify-end gap-3 bg-white rounded-lg shadow p-6">
+        <div className="flex flex-wrap items-center justify-end gap-3 bg-white rounded-lg shadow p-6">
           <Link
             href="/dash/common-pages"
             className="px-6 py-2 border border-gray-900 text-gray-900 rounded-lg hover:bg-gray-50 transition"

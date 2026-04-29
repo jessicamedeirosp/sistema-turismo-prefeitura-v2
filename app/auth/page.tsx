@@ -27,6 +27,7 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
   const router = useRouter()
 
   const {
@@ -40,7 +41,7 @@ export default function AuthPage() {
 
   const onSubmit = async (data: AuthFormData) => {
     setIsLoading(true)
-
+    setLoginError(null)
     try {
       if (isLogin) {
         // Login com credenciais usando POST (não passa dados na URL)
@@ -52,7 +53,8 @@ export default function AuthPage() {
         })
 
         if (result?.error) {
-          toast.error('Credenciais inválidas')
+          toast.error('Email ou senha incorreto')
+          setLoginError('Email ou senha incorreto')
           return
         }
 
@@ -106,6 +108,7 @@ export default function AuthPage() {
 
   const toggleMode = () => {
     setIsLogin(!isLogin)
+    setLoginError(null)
     reset()
   }
 
@@ -263,55 +266,56 @@ export default function AuthPage() {
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
                   ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.password.message}
-                </p>
-              )}
-              {!isLogin && (
-                <p className="mt-1 text-xs text-gray-500">
-                  Mínimo 6 caracteres, 1 letra maiúscula e 1 caractere especial
-                </p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading
-                ? 'Carregando...'
-                : isLogin
-                  ? 'Entrar'
-                  : 'Criar conta'}
-            </button>
-          </form>
-
-          {/* Toggle Login/Register */}
-          <div className="mt-6 text-center">
-            <button
-              onClick={toggleMode}
+                    <div className="mb-4">
+                      <label className="block text-gray-700 font-semibold mb-1" htmlFor="email">Email</label>
+                      <input
+                        id="email"
+                        type="email"
+                        className={`input input-bordered w-full ${errors.email ? 'border-red-500' : ''}`}
+                        {...register('email')}
+                        autoComplete="email"
+                        disabled={isLoading}
+                      />
+                      {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-gray-700 font-semibold mb-1" htmlFor="password">Senha</label>
+                      <div className="relative">
+                        <input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          className={`input input-bordered w-full pr-10 ${errors.password || loginError ? 'border-red-500' : ''}`}
+                          {...register('password')}
+                          autoComplete="current-password"
+                          disabled={isLoading}
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
+                          onClick={() => setShowPassword((v) => !v)}
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                      {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
+                      {loginError && <span className="text-red-500 text-xs">{loginError}</span>}
+                    </div>
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
-              {isLogin
-                ? 'Não tem conta? Cadastre-se'
-                : 'Já tem conta? Faça login'}
-            </button>
-          </div>
-        </div>
+                  {isLogin
+                    ? 'Não tem conta? Cadastre-se'
+                    : 'Já tem conta? Faça login'}
+                </button>
+              </div>
+            </div>
 
-        {/* Footer */}
-        <p className="text-center mt-6 text-gray-600 text-sm">
-          Plataforma de Gestão Turística
-        </p>
+            {/* Footer */}
+            <p className="text-center mt-6 text-gray-600 text-sm">
+              Plataforma de Gestão Turística
+            </p>
+        </div>
       </div>
-    </div>
-  )
+      )
 }
 

@@ -37,6 +37,7 @@ const BEACHES: Beach[] = [
 export default function BeachesMap() {
   const router = useRouter()
   const [selectedBeach, setSelectedBeach] = useState<Beach | null>(null)
+  const [selectedBeachDetailUrl, setSelectedBeachDetailUrl] = useState<string | null>(null)
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
   const [locationError, setLocationError] = useState<string | null>(null)
 
@@ -98,22 +99,20 @@ export default function BeachesMap() {
     }
   }
 
-  // Buscar praia na base de dados pelo nome e redirecionar para a página de detalhe (API otimizada)
-  const goToBeachDetail = async (beachName: string) => {
+  const fetchBeachDetailUrl = async (beachName: string) => {
+    setSelectedBeachDetailUrl(null)
+
     try {
       const res = await fetch(`/api/public/beaches/by-name?name=${encodeURIComponent(beachName)}`)
       if (!res.ok) {
-        toast.error('Praia não encontrada na base de dados pública.')
         return
       }
       const beach = await res.json()
       if (beach && beach.id) {
-        router.push(`/praias/${beach.id}`)
-      } else {
-        toast.error('Praia não encontrada na base de dados pública.')
+        setSelectedBeachDetailUrl(`/praias/${beach.id}`)
       }
     } catch (e) {
-      toast.error('Erro ao buscar praia na base de dados.')
+      console.error('Erro ao buscar detalhe da praia:', e)
     }
   }
 
@@ -159,7 +158,10 @@ export default function BeachesMap() {
             return (
               <g
                 key={beach.id}
-                onClick={() => setSelectedBeach(beach)}
+                onClick={() => {
+                  setSelectedBeach(beach)
+                  fetchBeachDetailUrl(beach.name)
+                }}
                 className="cursor-pointer transition-all"
                 style={{ transformOrigin: `${pos.x}% ${pos.y}%` }}
               >
@@ -324,12 +326,18 @@ export default function BeachesMap() {
                     <Route className="w-4 h-4" />
                     Como Chegar
                   </button>
-                  <button
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-semibold"
-                    onClick={() => goToBeachDetail(selectedBeach.name)}
-                  >
-                    Ver Detalhes
-                  </button>
+                  {selectedBeachDetailUrl ? (
+                    <button
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-semibold"
+                      onClick={() => router.push(selectedBeachDetailUrl)}
+                    >
+                      Ver Detalhes
+                    </button>
+                  ) : (
+                    <span className="px-4 py-2 rounded-lg bg-gray-100 text-sm text-gray-500">
+                      Detalhes indisponíveis
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

@@ -188,7 +188,7 @@ export default function DistrictFormPage({
 
       {/* Botões de ação */}
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           {isEditing && (
             <button
               type="button"
@@ -200,7 +200,7 @@ export default function DistrictFormPage({
             </button>
           )}
 
-          <div className={`flex items-center gap-3 ${!isEditing ? 'ml-auto' : ''}`}>
+          <div className={`flex flex-wrap items-center gap-3 ${!isEditing ? 'ml-auto' : ''}`}>
             <button
               type="button"
               onClick={() => router.push('/dash/districts')}

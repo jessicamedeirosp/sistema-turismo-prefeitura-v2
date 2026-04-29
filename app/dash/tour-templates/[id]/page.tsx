@@ -30,6 +30,7 @@ export default function TourTemplateFormPage() {
   const [loadingData, setLoadingData] = useState(true)
   const [images, setImages] = useState<string[]>([])
   const [description, setDescription] = useState('')
+  const [imagesError, setImagesError] = useState('')
 
   const isEdit = !!params?.id && params.id !== 'new'
 
@@ -78,8 +79,12 @@ export default function TourTemplateFormPage() {
   }
 
   const onSubmit = async (data: TourTemplateFormData) => {
+    setImagesError('')
+
     if (images.length === 0) {
-      toast.error('Adicione pelo menos uma imagem')
+      const message = 'Imagem é obrigatória'
+      setImagesError(message)
+      toast.error(message)
       return
     }
 
@@ -211,7 +216,11 @@ export default function TourTemplateFormPage() {
           {/* Imagens */}
           <ImageUpload
             images={images}
-            onImagesChange={setImages}
+            onImagesChange={(newImages) => {
+              setImages(newImages)
+              if (newImages.length > 0) setImagesError('')
+            }}
+            error={imagesError}
             maxImages={10}
             title="Fotos do Passeio"
             description="Adicione fotos que representem bem este passeio. A primeira imagem será usada como capa."
@@ -229,7 +238,7 @@ export default function TourTemplateFormPage() {
 
           {/* Botões */}
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               {/* Botão Excluir à esquerda */}
               <div>
                 {isEdit && (
@@ -255,7 +264,7 @@ export default function TourTemplateFormPage() {
               </div>
 
               {/* Botões Cancelar e Salvar à direita */}
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
                   onClick={() => router.push('/dash/tour-templates')}

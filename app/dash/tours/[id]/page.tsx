@@ -555,7 +555,7 @@ export default function TourFormPage({ params }: { params: { id?: string } }) {
         </div>
 
         {/* Ações */}
-        <div className="flex items-center justify-between bg-white rounded-lg shadow p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-white rounded-lg shadow p-6">
           <div>
             {isEditing && !isAdmin && (
               <button
@@ -569,7 +569,7 @@ export default function TourFormPage({ params }: { params: { id?: string } }) {
               </button>
             )}
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             {/* Botões Admin para Aprovar/Rejeitar */}
             {isAdmin && isEditing && formData.status === 'PENDING' ? (
               <>

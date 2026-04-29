@@ -149,7 +149,7 @@ export default function PublicHomePage() {
           {loadingBeaches ? (
             <SectionSkeleton height={300} />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {(Array.isArray(beaches) ? beaches : []).slice(0, 6).map((beach: any) => (
                 <Link
                   key={beach.id}
@@ -272,7 +272,7 @@ export default function PublicHomePage() {
           {loadingAccommodations ? (
             <SectionSkeleton height={250} />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {(Array.isArray(accommodations) ? accommodations : []).slice(0, 6).map((accommodation: any) => (
                 <Link
                   key={accommodation.id}
@@ -375,7 +375,7 @@ export default function PublicHomePage() {
           {loadingTours ? (
             <SectionSkeleton height={250} />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {(Array.isArray(tours) ? tours : []).slice(0, 4).map((tour: any) => (
                 <Link
                   key={tour.id}
@@ -425,7 +425,7 @@ export default function PublicHomePage() {
           {loadingNews ? (
             <SectionSkeleton height={250} />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {(Array.isArray(news) ? news : []).slice(0, 6).map((article: any) => {
                 const articleDate = new Date(article.created_at)
                 const formattedDate = articleDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()

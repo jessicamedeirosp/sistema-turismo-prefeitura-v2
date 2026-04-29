@@ -319,7 +319,7 @@ export default function ParkingFormPage() {
 
         {/* Botões */}
         <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             {/* Botão Excluir à esquerda */}
             <div>
               {isEdit && (
@@ -335,7 +335,7 @@ export default function ParkingFormPage() {
             </div>
 
             {/* Botões Cancelar e Salvar à direita */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={() => router.push('/dash/parkings')}

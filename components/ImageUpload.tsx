@@ -11,6 +11,7 @@ interface ImageUploadProps {
   maxImages?: number
   title?: string
   description?: string
+  error?: string
   onUploadingChange?: (isUploading: boolean) => void
 }
 
@@ -20,6 +21,7 @@ export default function ImageUpload({
   maxImages = 10,
   title = 'Imagens',
   description = 'Adicione fotos do estabelecimento. Primeira imagem será a capa.',
+  error,
   onUploadingChange,
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
@@ -109,7 +111,7 @@ export default function ImageUpload({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className={`bg-white rounded-lg shadow-sm border p-6 ${error ? 'border-red-500' : 'border-gray-200'}`}>
       <div className="mb-4">
         <h2 className="text-lg font-bold text-gray-900">{title}</h2>
         <p className="text-sm text-gray-600 mt-1">{description}</p>
@@ -197,6 +199,7 @@ export default function ImageUpload({
           <p className="text-sm">Nenhuma imagem adicionada ainda</p>
         </div>
       )}
+      {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
     </div>
   )
 }
