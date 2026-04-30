@@ -34,6 +34,7 @@ import ConfirmModal from '@/components/ConfirmModal'
 import RejectModal from '@/components/RejectModal'
 import DetailSection from '@/components/DetailSection'
 import DetailField from '@/components/DetailField'
+import { getBusinessCategoryLabel } from '@/lib/businessCategories'
 
 interface BusinessDetailProps {
   params: {
@@ -186,7 +187,7 @@ export default function BusinessDetailPage({ params }: BusinessDetailProps) {
           <DetailField
             icon={Building2}
             label="Categoria"
-            value={business.category === 'FOOD' ? 'Alimentação' : 'Acomodação'}
+            value={getBusinessCategoryLabel(business.category)}
           />
           <DetailField icon={FileText} label="CPF/CNPJ" value={business.cnpj_cpf} />
           <DetailField icon={FileText} label="Cadastur" value={business.cadastur} />

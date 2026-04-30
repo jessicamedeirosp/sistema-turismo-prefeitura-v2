@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { canManageBusinesses, canManageAgencies, canManageBeaches, canManageTags, canManageTours, UserRole } from '@/lib/permissions'
+import { isBusinessRole } from '@/lib/businessCategories'
 
 type MenuItem = {
   label: string
@@ -214,7 +215,7 @@ export default function DashLayout({
     let baseMenu: MenuItem[] = []
     if (role === 'ADMIN' || role === 'MODERATOR') {
       baseMenu = adminMenuItems
-    } else if (role === 'BUSINESS_FOOD' || role === 'BUSINESS_ACCOMMODATION') {
+    } else if (isBusinessRole(role)) {
       baseMenu = businessMenuItems
     } else if (role === 'GUIDE') {
       baseMenu = guideMenuItems

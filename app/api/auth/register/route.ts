@@ -3,7 +3,14 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { generateAccessToken, generateRefreshToken, setAuthCookies } from '@/lib/auth'
 import { z } from 'zod'
-import { UserRole } from '@prisma/client'
+
+const roleOptions = [
+  'BUSINESS_FOOD',
+  'BUSINESS_ACCOMMODATION',
+  'BUSINESS_SERVICES',
+  'BUSINESS_ARTISAN',
+  'GUIDE',
+] as const
 
 const registerSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -12,7 +19,7 @@ const registerSchema = z.object({
     .regex(/[A-Z]/, 'Senha deve conter pelo menos uma letra maiúscula')
     .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Senha deve conter pelo menos um caractere especial'),
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
-  role: z.nativeEnum(UserRole, {
+  role: z.enum(roleOptions, {
     required_error: 'Tipo de conta obrigatório',
   }),
 })

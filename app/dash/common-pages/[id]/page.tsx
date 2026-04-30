@@ -191,6 +191,8 @@ export default function CommonPageFormPage() {
               <option value="BEACH">Praias</option>
               <option value="BUSINESS_FOOD">Gastronomia</option>
               <option value="BUSINESS_ACCOMMODATION">Hospedagem</option>
+              <option value="BUSINESS_SERVICES">Serviços Case-na-Praia</option>
+              <option value="BUSINESS_ARTISAN">Artesanato</option>
               <option value="GUIDE">Guias</option>
               <option value="TOUR">Passeios</option>
               <option value="EVENTS">Eventos</option>

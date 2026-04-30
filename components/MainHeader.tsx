@@ -20,6 +20,8 @@ export default function MainHeader({ menuPages, logoSrc = '/logo-menu.png' }: Ma
     BEACH: '/praias',
     BUSINESS_FOOD: '/o-que-comer',
     BUSINESS_ACCOMMODATION: '/onde-ficar',
+    BUSINESS_SERVICES: '/case-na-praia-servico',
+    BUSINESS_ARTISAN: '/artesanato',
     EVENTS: '/eventos',
     NEWS: '/noticias',
     TOUR: '/o-que-fazer',

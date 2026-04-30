@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Clock, CheckCircle, XCircle, Edit, Search, Eye } from 'lucide-react'
 import TablePagination from '@/components/TablePagination'
+import { getBusinessCategoryLabel } from '@/lib/businessCategories'
 
 export default function BusinessesPage() {
   const { data: session } = useSession()
@@ -232,9 +233,7 @@ export default function BusinessesPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm text-gray-900">
-                            {business.category === 'FOOD'
-                              ? '🍽️ Alimentação'
-                              : '🏨 Acomodação'}
+                            {getBusinessCategoryLabel(business.category)}
                           </span>
                         </td>
                         <td className="px-6 py-4">

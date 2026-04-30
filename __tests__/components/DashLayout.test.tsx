@@ -40,6 +40,7 @@ describe('DashLayout', () => {
           name: 'João Silva',
           email: 'joao@example.com',
           role: 'BUSINESS_FOOD',
+          first_login: false,
         },
         expires: '',
       },
@@ -65,6 +66,7 @@ describe('DashLayout', () => {
           name: 'Test User',
           email: 'test@example.com',
           role: 'BUSINESS_FOOD',
+          first_login: false,
         },
         expires: '',
       },
@@ -82,6 +84,35 @@ describe('DashLayout', () => {
     expect(screen.getByText('Minhas Solicitações')).toBeInTheDocument()
   })
 
+  it('should show business menu items for services and artisan users', () => {
+    for (const role of ['BUSINESS_SERVICES', 'BUSINESS_ARTISAN']) {
+      mockUseSession.mockReturnValue({
+        data: {
+          user: {
+            id: 'user-123',
+            name: 'Test User',
+            email: 'test@example.com',
+            role,
+            first_login: false,
+          },
+          expires: '',
+        },
+        status: 'authenticated',
+        update: jest.fn(),
+      })
+
+      const { unmount } = render(
+        <DashLayout>
+          <div>Content</div>
+        </DashLayout>
+      )
+
+      expect(screen.getByText('Meu Cadastro')).toBeInTheDocument()
+      expect(screen.getByText('Minhas Solicitações')).toBeInTheDocument()
+      unmount()
+    }
+  })
+
   it('should show admin menu items for admin user', () => {
     mockUseSession.mockReturnValue({
       data: {
@@ -90,6 +121,7 @@ describe('DashLayout', () => {
           name: 'Admin User',
           email: 'admin@example.com',
           role: 'ADMIN',
+          first_login: false,
         },
         expires: '',
       },
@@ -114,6 +146,7 @@ describe('DashLayout', () => {
           name: 'Test User',
           email: 'test@example.com',
           role: 'BUSINESS_FOOD',
+          first_login: false,
         },
         expires: '',
       },
@@ -145,6 +178,7 @@ describe('DashLayout', () => {
           name: 'Test User',
           email: 'test@example.com',
           role: 'BUSINESS_FOOD',
+          first_login: false,
         },
         expires: '',
       },
@@ -170,6 +204,7 @@ describe('DashLayout', () => {
           name: 'Test User',
           email: 'test@example.com',
           role: 'BUSINESS_FOOD',
+          first_login: false,
         },
         expires: '',
       },

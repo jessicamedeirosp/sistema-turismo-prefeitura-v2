@@ -97,6 +97,10 @@ export default function UsersPage() {
         return 'Empresa - Alimentação'
       case 'BUSINESS_ACCOMMODATION':
         return 'Empresa - Hospedagem'
+      case 'BUSINESS_SERVICES':
+        return 'Empresa - Serviços Case-na-Praia'
+      case 'BUSINESS_ARTISAN':
+        return 'Empresa - Artesanato'
       case 'GUIDE':
         return 'Guia'
       default:
@@ -114,6 +118,10 @@ export default function UsersPage() {
         return 'bg-orange-100 text-orange-800'
       case 'BUSINESS_ACCOMMODATION':
         return 'bg-cyan-100 text-cyan-800'
+      case 'BUSINESS_SERVICES':
+        return 'bg-sky-100 text-sky-800'
+      case 'BUSINESS_ARTISAN':
+        return 'bg-amber-100 text-amber-800'
       case 'GUIDE':
         return 'bg-green-100 text-green-800'
       default:
@@ -218,6 +226,8 @@ export default function UsersPage() {
             <option value="MODERATOR">Moderador</option>
             <option value="BUSINESS_FOOD">Empresa - Alimentação</option>
             <option value="BUSINESS_ACCOMMODATION">Empresa - Hospedagem</option>
+            <option value="BUSINESS_SERVICES">Empresa - Serviços Case-na-Praia</option>
+            <option value="BUSINESS_ARTISAN">Empresa - Artesanato</option>
             <option value="GUIDE">Guia</option>
           </select>
         </div>

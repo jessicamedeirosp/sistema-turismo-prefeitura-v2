@@ -17,6 +17,8 @@ datasource db {
 enum Category {
   FOOD
   ACCOMMODATION
+  SERVICES
+  ARTISAN
 }
 
 enum Status {
@@ -35,6 +37,8 @@ enum UserRole {
   MODERATOR // Prefeitura - pode aprovar/rejeitar
   BUSINESS_FOOD // Empresa Alimentícia
   BUSINESS_ACCOMMODATION // Empresa de Hospedagem
+  BUSINESS_SERVICES // Serviços case-na-praia
+  BUSINESS_ARTISAN // Artesanato
   GUIDE // Guia/Agência - gerencia perfil e passeios
 }
 
@@ -84,6 +88,8 @@ enum CommonPageName {
   BUSINESS_FOOD // Gastronomia
   BUSINESS_ACCOMMODATION // Hospedagem
   GUIDE // Guias
+  BUSINESS_SERVICES // Serviços case-na-praia
+  BUSINESS_ARTISAN // Artesanato
   TOUR // Passeios
   EVENTS // Eventos
   NEWS // Notícias
@@ -531,12 +537,12 @@ model CityDepartment {
 // BRANDING DO SITE (Header + Rodapé)
 // ========================================
 model SiteBranding {
-  id                 String   @id @default(uuid())
-  header_logo         String
-  header_logo_in_footer Boolean @default(false)
-  footer_images       String[] @default([])
-  created_at          DateTime @default(now())
-  updated_at          DateTime @updatedAt
+  id                    String   @id @default(uuid())
+  header_logo           String
+  header_logo_in_footer Boolean  @default(false)
+  footer_images         String[] @default([])
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
 
   @@map("site_branding")
 }

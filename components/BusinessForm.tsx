@@ -14,7 +14,7 @@ import DistrictSelect from './DistrictSelect'
 
 const businessSchema = z.object({
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
-  category: z.enum(['FOOD', 'ACCOMMODATION'], { required_error: 'Selecione uma categoria' }),
+  category: z.enum(['FOOD', 'ACCOMMODATION', 'SERVICES', 'ARTISAN'], { required_error: 'Selecione uma categoria' }),
   cnpj_cpf: z.string().min(11, 'CPF/CNPJ inválido').max(14),
   cadastur: z.string().min(3, 'Cadastur obrigatório'),
   address_street: z.string().min(3, 'Rua obrigatória'),
@@ -73,47 +73,48 @@ export default function BusinessForm({ mode, businessId, userRole, onLoadingChan
             setValue('category', 'FOOD')
           } else if (userRole === 'BUSINESS_ACCOMMODATION') {
             setValue('category', 'ACCOMMODATION')
+          } else if (userRole === 'BUSINESS_SERVICES') {
+            setValue('category', 'SERVICES')
+          } else if (userRole === 'BUSINESS_ARTISAN') {
+            setValue('category', 'ARTISAN')
           }
         }
 
-        // Busca negócio existente
-        if (mode === 'edit' || mode === 'admin-edit') {
-          const endpoint = mode === 'admin-edit'
-            ? `/api/business/${businessId}`
-            : '/api/business/my-business'
+        const endpoint = mode === 'admin-edit'
+          ? `/api/business/${businessId}`
+          : '/api/business/my-business'
 
-          const businessRes = await fetch(endpoint)
-          if (businessRes.ok) {
-            const data = await businessRes.json()
-            const business = mode === 'admin-edit' ? data.business : data.business
+        const businessRes = await fetch(endpoint)
+        if (businessRes.ok) {
+          const data = await businessRes.json()
+          const business = mode === 'admin-edit' ? data.business : data.business
 
-            if (business) {
-              // Define campos do formulário
-              const fieldsToSet = ['category', 'name', 'cnpj_cpf', 'cadastur',
-                'address_street', 'address_number', 'address_district', 'address_complement',
-                'phone_primary', 'phone_secondary', 'website', 'instagram', 'facebook',
-                'link_menu', 'coupon']
+          if (business) {
+            // Define campos do formulário
+            const fieldsToSet = ['category', 'name', 'cnpj_cpf', 'cadastur',
+              'address_street', 'address_number', 'address_district', 'address_complement',
+              'phone_primary', 'phone_secondary', 'website', 'instagram', 'facebook',
+              'link_menu', 'coupon']
 
-              fieldsToSet.forEach((field) => {
-                if (business[field]) {
-                  setValue(field as any, business[field])
-                }
-              })
-
-              // Tags em estado separado
-              if (business.tags) {
-                setSelectedTags(business.tags.map((t: any) => t.tag_id))
+            fieldsToSet.forEach((field) => {
+              if (business[field]) {
+                setValue(field as any, business[field])
               }
+            })
 
-              // Details em estado separado
-              if (business.details) {
-                setDetailsContent(business.details)
-              }
+            // Tags em estado separado
+            if (business.tags) {
+              setSelectedTags(business.tags.map((t: any) => t.tag_id))
+            }
 
-              // Banners
-              if (business.images && business.images.length > 0) {
-                setBanners(business.images)
-              }
+            // Details em estado separado
+            if (business.details) {
+              setDetailsContent(business.details)
+            }
+
+            // Banners
+            if (business.images && business.images.length > 0) {
+              setBanners(business.images)
             }
           }
         }
@@ -269,6 +270,30 @@ export default function BusinessForm({ mode, businessId, userRole, onLoadingChan
             <div className="border-2 border-gray-200 rounded-lg p-4 peer-checked:border-purple-500 peer-checked:bg-purple-50 transition">
               <p className="font-semibold text-gray-900">🏨 Acomodação</p>
               <p className="text-sm text-gray-600">Hotéis, pousadas, etc.</p>
+            </div>
+          </label>
+          <label className="relative cursor-pointer">
+            <input
+              type="radio"
+              value="SERVICES"
+              {...register('category')}
+              className="peer sr-only"
+            />
+            <div className="border-2 border-gray-200 rounded-lg p-4 peer-checked:border-teal-500 peer-checked:bg-teal-50 transition">
+              <p className="font-semibold text-gray-900">🛠️ Serviços Case-na-Praia</p>
+              <p className="text-sm text-gray-600">Fotografia, buffet, eventos e serviços locais</p>
+            </div>
+          </label>
+          <label className="relative cursor-pointer">
+            <input
+              type="radio"
+              value="ARTISAN"
+              {...register('category')}
+              className="peer sr-only"
+            />
+            <div className="border-2 border-gray-200 rounded-lg p-4 peer-checked:border-amber-500 peer-checked:bg-amber-50 transition">
+              <p className="font-semibold text-gray-900">🎨 Artesanato</p>
+              <p className="text-sm text-gray-600">Artesãos, artistas e feiras locais</p>
             </div>
           </label>
         </div>

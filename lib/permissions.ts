@@ -3,7 +3,7 @@
  * Define permissões e funcionalidades por tipo de usuário
  */
 
-export type UserRole = 'ADMIN' | 'MODERATOR' | 'BUSINESS_FOOD' | 'BUSINESS_ACCOMMODATION' | 'GUIDE'
+export type UserRole = 'ADMIN' | 'MODERATOR' | 'BUSINESS_FOOD' | 'BUSINESS_ACCOMMODATION' | 'BUSINESS_SERVICES' | 'BUSINESS_ARTISAN' | 'GUIDE'
 
 export interface RolePermissions {
   // Dashboard
@@ -222,6 +222,112 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
   },
 
   BUSINESS_ACCOMMODATION: {
+    // Dashboard
+    viewDashboard: true,
+    viewStatistics: false,
+
+    // Business Management
+    viewAllBusinesses: false,
+    approveBusinesses: false,
+    rejectBusinesses: false,
+    editAnyBusiness: false,
+    deleteAnyBusiness: false,
+    manageOwnBusiness: true,
+    createBusiness: true,
+
+    // Agency/Guide Management
+    viewAllAgencies: false,
+    approveAgencies: false,
+    rejectAgencies: false,
+    editAnyAgency: false,
+    deleteAnyAgency: false,
+    manageOwnAgency: false,
+    createAgency: false,
+
+    // Tags Management
+    viewTags: true,
+    createTags: false,
+    editTags: false,
+    deleteTags: false,
+
+    // Beaches Management
+    viewAllBeaches: false,
+    createBeaches: false,
+    editBeaches: false,
+    deleteBeaches: false,
+    approveBeaches: false,
+
+    // User Management
+    viewAllUsers: false,
+    createUsers: false,
+    editUsers: false,
+    deleteUsers: false,
+    changeUserRoles: false,
+
+    // Tours Management
+    viewAllTours: false,
+    approveTours: false,
+    rejectTours: false,
+    editAnyTour: false,
+    deleteAnyTour: false,
+    manageOwnTours: false,
+    createTours: false,
+  },
+
+  BUSINESS_SERVICES: {
+    // Dashboard
+    viewDashboard: true,
+    viewStatistics: false,
+
+    // Business Management
+    viewAllBusinesses: false,
+    approveBusinesses: false,
+    rejectBusinesses: false,
+    editAnyBusiness: false,
+    deleteAnyBusiness: false,
+    manageOwnBusiness: true,
+    createBusiness: true,
+
+    // Agency/Guide Management
+    viewAllAgencies: false,
+    approveAgencies: false,
+    rejectAgencies: false,
+    editAnyAgency: false,
+    deleteAnyAgency: false,
+    manageOwnAgency: false,
+    createAgency: false,
+
+    // Tags Management
+    viewTags: true,
+    createTags: false,
+    editTags: false,
+    deleteTags: false,
+
+    // Beaches Management
+    viewAllBeaches: false,
+    createBeaches: false,
+    editBeaches: false,
+    deleteBeaches: false,
+    approveBeaches: false,
+
+    // User Management
+    viewAllUsers: false,
+    createUsers: false,
+    editUsers: false,
+    deleteUsers: false,
+    changeUserRoles: false,
+
+    // Tours Management
+    viewAllTours: false,
+    approveTours: false,
+    rejectTours: false,
+    editAnyTour: false,
+    deleteAnyTour: false,
+    manageOwnTours: false,
+    createTours: false,
+  },
+
+  BUSINESS_ARTISAN: {
     // Dashboard
     viewDashboard: true,
     viewStatistics: false,

@@ -16,7 +16,7 @@ const authSchema = z.object({
     .regex(/[A-Z]/, 'Senha deve conter pelo menos uma letra maiúscula')
     .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Senha deve conter pelo menos um caractere especial'),
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres').optional(),
-  role: z.enum(['BUSINESS_FOOD', 'BUSINESS_ACCOMMODATION', 'GUIDE'], {
+  role: z.enum(['BUSINESS_FOOD', 'BUSINESS_ACCOMMODATION', 'BUSINESS_SERVICES', 'BUSINESS_ARTISAN', 'GUIDE'], {
     required_error: 'Selecione o tipo de conta',
   }).optional(),
 })
@@ -197,6 +197,40 @@ export default function AuthPage() {
                     <label className="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition">
                       <input
                         type="radio"
+                        value="BUSINESS_SERVICES"
+                        {...register('role')}
+                        className="w-5 h-5 text-blue-600"
+                      />
+                      <div className="ml-3">
+                        <p className="font-semibold text-gray-900">
+                          Serviços Case-na-Praia
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Fotografia, buffet, eventos, serviços locais
+                        </p>
+                      </div>
+                    </label>
+
+                    <label className="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                      <input
+                        type="radio"
+                        value="BUSINESS_ARTISAN"
+                        {...register('role')}
+                        className="w-5 h-5 text-blue-600"
+                      />
+                      <div className="ml-3">
+                        <p className="font-semibold text-gray-900">
+                          Artesanato
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Artistas, artesãos e feiras locais
+                        </p>
+                      </div>
+                    </label>
+
+                    <label className="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                      <input
+                        type="radio"
                         value="GUIDE"
                         {...register('role')}
                         className="w-5 h-5 text-blue-600"
@@ -263,59 +297,36 @@ export default function AuthPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <div className="mb-4">
-                      <label className="block text-gray-700 font-semibold mb-1" htmlFor="email">Email</label>
-                      <input
-                        id="email"
-                        type="email"
-                        className={`input input-bordered w-full ${errors.email ? 'border-red-500' : ''}`}
-                        {...register('email')}
-                        autoComplete="email"
-                        disabled={isLoading}
-                      />
-                      {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 font-semibold mb-1" htmlFor="password">Senha</label>
-                      <div className="relative">
-                        <input
-                          id="password"
-                          type={showPassword ? 'text' : 'password'}
-                          className={`input input-bordered w-full pr-10 ${errors.password || loginError ? 'border-red-500' : ''}`}
-                          {...register('password')}
-                          autoComplete="current-password"
-                          disabled={isLoading}
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
-                          onClick={() => setShowPassword((v) => !v)}
-                          tabIndex={-1}
-                        >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
-                      </div>
-                      {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
-                      {loginError && <span className="text-red-500 text-xs">{loginError}</span>}
-                    </div>
-              className="text-blue-600 hover:text-blue-700 font-medium"
-            >
-                  {isLogin
-                    ? 'Não tem conta? Cadastre-se'
-                    : 'Já tem conta? Faça login'}
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
             </div>
 
-            {/* Footer */}
+            <button
+              type="submit"
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading}
+            >
+              {isLogin ? 'Entrar' : 'Criar conta'}
+            </button>
+
+            <p className="text-center text-sm text-gray-600">
+              <button
+                type="button"
+                onClick={toggleMode}
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                {isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Faça login'}
+              </button>
+            </p>
+
             <p className="text-center mt-6 text-gray-600 text-sm">
               Plataforma de Gestão Turística
             </p>
+          </form>
         </div>
       </div>
-      )
+    </div>
+  )
 }
 

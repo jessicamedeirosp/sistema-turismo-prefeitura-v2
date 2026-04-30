@@ -6,7 +6,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category') // 'FOOD' ou 'ACCOMMODATION'
 
-    if (!category || !['FOOD', 'ACCOMMODATION'].includes(category)) {
+    if (!category || !['FOOD', 'ACCOMMODATION', 'SERVICES', 'ARTISAN'].includes(category)) {
       return NextResponse.json({ error: 'Categoria inválida' }, { status: 400 })
     }
 
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const allBusinesses = await prisma.business.findMany({
       where: {
         status: 'APPROVED',
-        category: category as 'FOOD' | 'ACCOMMODATION',
+        category: category as 'FOOD' | 'ACCOMMODATION' | 'SERVICES' | 'ARTISAN',
       },
       select: {
         id: true,

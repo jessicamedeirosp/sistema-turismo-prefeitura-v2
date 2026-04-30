@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
 import { authOptions } from '../../auth/authOptions'
+import { BUSINESS_ROLE_TO_CATEGORY, isBusinessRole } from '@/lib/businessCategories'
 
 export async function POST(request: Request) {
   try {
@@ -19,8 +20,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
+    if (!isBusinessRole(user.role)) {
+      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+    }
+
     const body = await request.json()
     const { tags, ...businessData } = body
+    const normalizedBusinessData = {
+      ...businessData,
+      category: BUSINESS_ROLE_TO_CATEGORY[user.role],
+    }
 
     // Verifica se já existe um cadastro
     const existingBusiness = await prisma.business.findFirst({
@@ -32,7 +41,7 @@ export async function POST(request: Request) {
       const updatedBusiness = await prisma.business.update({
         where: { id: existingBusiness.id },
         data: {
-          ...businessData,
+          ...normalizedBusinessData,
           status: 'PENDING', // Volta para pendente ao editar
           status_details: null, // Limpa detalhes de rejeição anterior
           updated_at: new Date(),
@@ -62,10 +71,10 @@ export async function POST(request: Request) {
       // Cria novo cadastro
       const newBusiness = await prisma.business.create({
         data: {
-          ...businessData,
+          ...normalizedBusinessData,
           user_id: user.id,
           status: 'PENDING',
-          images: businessData.images || [],
+          images: normalizedBusinessData.images || [],
         },
       })
 

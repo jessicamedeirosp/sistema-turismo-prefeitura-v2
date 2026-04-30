@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { CheckCircle, Clock, XCircle, Eye, Edit, AlertCircle, ImageIcon } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
+import { getBusinessCategoryLabel, getBusinessPublicHref } from '@/lib/businessCategories'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -167,7 +168,7 @@ export default function BusinessStatusPage() {
 
                 {business.status === 'APPROVED' && (
                   <Link
-                    href={`/business/${business.id}`}
+                    href={getBusinessPublicHref(business.category, business.id)}
                     target="_blank"
                     className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
                   >
@@ -187,7 +188,7 @@ export default function BusinessStatusPage() {
             <div>
               <span className="text-gray-600">Categoria:</span>
               <span className="ml-2 font-semibold text-gray-900">
-                {business.category === 'FOOD' ? '🍽️ Alimentação' : '🏨 Acomodação'}
+                {getBusinessCategoryLabel(business.category)}
               </span>
             </div>
             <div>

@@ -45,7 +45,7 @@ describe('Tags API - GET /api/tags', () => {
 
       ; (prisma.tag.findMany as jest.Mock).mockResolvedValue(mockTags)
 
-    const response = await GET()
+    const response = await GET(new Request('http://localhost:3000/api/tags') as any)
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -68,7 +68,7 @@ describe('Tags API - GET /api/tags', () => {
   it('should handle errors', async () => {
     ; (prisma.tag.findMany as jest.Mock).mockRejectedValue(new Error('Database error'))
 
-    const response = await GET()
+    const response = await GET(new Request('http://localhost:3000/api/tags') as any)
     const data = await response.json()
 
     expect(response.status).toBe(500)

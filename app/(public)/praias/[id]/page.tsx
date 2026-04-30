@@ -134,6 +134,7 @@ export default function PraiaDetalhePage() {
             })}
           </div>
         )}
+
         {beach.details && (
           <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: beach.details }} />
         )}

@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     // Valida role
-    const validRoles = ['ADMIN', 'MODERATOR', 'BUSINESS_FOOD', 'BUSINESS_ACCOMMODATION', 'GUIDE']
+    const validRoles = ['ADMIN', 'MODERATOR', 'BUSINESS_FOOD', 'BUSINESS_ACCOMMODATION', 'BUSINESS_SERVICES', 'BUSINESS_ARTISAN', 'GUIDE']
     if (!validRoles.includes(role)) {
       return NextResponse.json(
         { error: 'Tipo de usuário inválido' },

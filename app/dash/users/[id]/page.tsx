@@ -8,7 +8,14 @@ import Link from 'next/link'
 import ConfirmModal from '@/components/ConfirmModal'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
-type UserRole = 'ADMIN' | 'MODERATOR' | 'BUSINESS_FOOD' | 'BUSINESS_ACCOMMODATION' | 'GUIDE'
+type UserRole =
+  | 'ADMIN'
+  | 'MODERATOR'
+  | 'BUSINESS_FOOD'
+  | 'BUSINESS_ACCOMMODATION'
+  | 'BUSINESS_SERVICES'
+  | 'BUSINESS_ARTISAN'
+  | 'GUIDE'
 
 export default function UserFormPage() {
   const router = useRouter()
@@ -189,6 +196,8 @@ export default function UserFormPage() {
               <option value="MODERATOR">Moderador</option>
               <option value="BUSINESS_FOOD">Estabelecimento - Alimentação</option>
               <option value="BUSINESS_ACCOMMODATION">Estabelecimento - Hospedagem</option>
+              <option value="BUSINESS_SERVICES">Estabelecimento - Serviços</option>
+              <option value="BUSINESS_ARTISAN">Estabelecimento - Artesanato</option>
               <option value="GUIDE">Agência/Guia</option>
             </select>
 
@@ -218,8 +227,14 @@ export default function UserFormPage() {
                 <div className="text-xs">
                   <span className="font-semibold text-green-700">Agência/Guia:</span>
                   <span className="text-gray-600"> Pode cadastrar e gerenciar a própria agência/guia e seus tours turísticos.</span>
+                </div>                <div className="text-xs">
+                  <span className="font-semibold text-teal-700">Estabelecimento - Serviços:</span>
+                  <span className="text-gray-600"> Pode cadastrar e gerenciar apenas o próprio negócio de serviços Case-na-Praia.</span>
                 </div>
-              </div>
+                <div className="text-xs">
+                  <span className="font-semibold text-amber-700">Estabelecimento - Artesanato:</span>
+                  <span className="text-gray-600"> Pode cadastrar e gerenciar apenas o próprio negócio de artesanato.</span>
+                </div>              </div>
             </div>
           </div>
 

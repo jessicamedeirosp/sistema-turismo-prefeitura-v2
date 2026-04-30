@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
 import { authOptions } from '../../auth/authOptions'
+import { hasPermission, UserRole } from '@/lib/permissions'
 
 export async function GET(
   request: NextRequest,
@@ -33,6 +34,17 @@ export async function GET(
 
     if (!business) {
       return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 404 })
+    }
+
+    if (!hasPermission(session.user.role as UserRole, 'viewAllBusinesses')) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email! },
+        select: { id: true },
+      })
+
+      if (!user || business.user_id !== user.id) {
+        return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+      }
     }
 
     return NextResponse.json({ business })

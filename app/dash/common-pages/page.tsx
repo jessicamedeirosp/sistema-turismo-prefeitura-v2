@@ -61,6 +61,8 @@ export default function CommonPagesListPage() {
       BEACH: 'Praias',
       BUSINESS_FOOD: 'Gastronomia',
       BUSINESS_ACCOMMODATION: 'Hospedagem',
+      BUSINESS_SERVICES: 'Serviços Case-na-Praia',
+      BUSINESS_ARTISAN: 'Artesanato',
       GUIDE: 'Guias',
       TOUR: 'Passeios',
       EVENTS: 'Eventos',
@@ -82,6 +84,8 @@ export default function CommonPagesListPage() {
       BEACH: 'bg-cyan-100 text-cyan-800',
       BUSINESS_FOOD: 'bg-red-100 text-red-800',
       BUSINESS_ACCOMMODATION: 'bg-violet-100 text-violet-800',
+      BUSINESS_SERVICES: 'bg-sky-100 text-sky-800',
+      BUSINESS_ARTISAN: 'bg-amber-100 text-amber-800',
       GUIDE: 'bg-amber-100 text-amber-800',
       TOUR: 'bg-lime-100 text-lime-800',
       EVENTS: 'bg-fuchsia-100 text-fuchsia-800',
@@ -201,6 +205,8 @@ export default function CommonPagesListPage() {
             <option value="BEACH">Praias</option>
             <option value="BUSINESS_FOOD">Gastronomia</option>
             <option value="BUSINESS_ACCOMMODATION">Hospedagem</option>
+            <option value="BUSINESS_SERVICES">Serviços Case-na-Praia</option>
+            <option value="BUSINESS_ARTISAN">Artesanato</option>
             <option value="GUIDE">Guias</option>
             <option value="TOUR">Passeios</option>
             <option value="EVENTS">Eventos</option>

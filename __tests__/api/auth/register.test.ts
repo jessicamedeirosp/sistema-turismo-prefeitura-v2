@@ -49,7 +49,8 @@ describe('POST /api/auth/register', () => {
     const data = await response.json()
 
     expect(response.status).toBe(200)
-    expect(data.message).toBe('Usuário criado com sucesso')
+    expect(data.success).toBe(true)
+    expect(data.user.role).toBe('BUSINESS_FOOD')
     expect(prisma.user.create).toHaveBeenCalled()
   })
 
@@ -92,5 +93,37 @@ describe('POST /api/auth/register', () => {
 
     expect(response.status).toBe(400)
     expect(data.error).toContain('Senha')
+  })
+
+  it('aceita a role BUSINESS_SERVICES', async () => {
+    const mockUser = {
+      id: '2',
+      email: 'service@example.com',
+      name: 'Service User',
+      role: 'BUSINESS_SERVICES',
+      password: 'hashedPassword',
+      created_at: new Date(),
+    }
+
+      ; (prisma.user.findUnique as jest.Mock).mockResolvedValue(null)
+      ; (prisma.user.create as jest.Mock).mockResolvedValue(mockUser)
+      ; (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword')
+
+    const request = new NextRequest('http://localhost:3000/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: 'service@example.com',
+        password: 'Test@123',
+        name: 'Service User',
+        role: 'BUSINESS_SERVICES',
+      }),
+    })
+
+    const response = await POST(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.success).toBe(true)
+    expect(data.user.role).toBe('BUSINESS_SERVICES')
   })
 })

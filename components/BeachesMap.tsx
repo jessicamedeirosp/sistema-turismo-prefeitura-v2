@@ -318,7 +318,7 @@ export default function BeachesMap() {
                     ).toFixed(1)} km
                   </p>
                 )}
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => openDirections(selectedBeach)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold flex items-center gap-2"
@@ -338,6 +338,7 @@ export default function BeachesMap() {
                       Detalhes indisponíveis
                     </span>
                   )}
+
                 </div>
               </div>
             </div>

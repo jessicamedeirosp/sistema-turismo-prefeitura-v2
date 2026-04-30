@@ -52,7 +52,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Nome e categoria são obrigatórios' }, { status: 400 })
     }
 
-    if (!['FOOD', 'ACCOMMODATION'].includes(category)) {
+    if (!['FOOD', 'ACCOMMODATION', 'SERVICES', 'ARTISAN'].includes(category)) {
       return NextResponse.json({ error: 'Categoria inválida' }, { status: 400 })
     }
 

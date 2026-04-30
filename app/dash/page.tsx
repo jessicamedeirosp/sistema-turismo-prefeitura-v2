@@ -1,9 +1,10 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
-import { Building2, UtensilsCrossed, Hotel, Clock, MapPin, Users, CheckCircle, Edit, AlertCircle } from 'lucide-react'
+import { Building2, Clock, MapPin, Users, CheckCircle, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { authOptions } from '../api/auth/authOptions'
+import { BUSINESS_ROLES, getBusinessCategoryLabel, isBusinessRole } from '@/lib/businessCategories'
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
@@ -36,7 +37,7 @@ export default async function DashboardPage() {
     const totalUsers = await prisma.user.count({
       where: {
         role: {
-          in: ['BUSINESS_FOOD', 'BUSINESS_ACCOMMODATION', 'GUIDE'],
+          in: [...BUSINESS_ROLES, 'GUIDE'],
         },
       },
     })
@@ -166,7 +167,7 @@ export default async function DashboardPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-900">
-                        {business.category === 'FOOD' ? '🍽️ Alimentação' : '🏨 Acomodação'}
+                        {getBusinessCategoryLabel(business.category)}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">
                         {new Date(business.created_at).toLocaleDateString('pt-BR')}
@@ -191,7 +192,7 @@ export default async function DashboardPage() {
   }
 
   // Dashboard para BUSINESS (Empresa)
-  if (role === 'BUSINESS_FOOD' || role === 'BUSINESS_ACCOMMODATION') {
+  if (isBusinessRole(role)) {
     // Busca o cadastro da empresa
     const business = await prisma.business.findFirst({
       where: { user_id: user!.id },

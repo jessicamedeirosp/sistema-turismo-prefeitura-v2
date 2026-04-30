@@ -101,6 +101,46 @@ async function main() {
   }
   console.log('✅ Tags de acomodação criadas')
 
+  const serviceTags = [
+    { name: 'Fotografia', icon: 'Camera' },
+    { name: 'Buffet', icon: 'Utensils' },
+    { name: 'Decoracao', icon: 'Sparkles' },
+    { name: 'Eventos', icon: 'Calendar' },
+  ]
+
+  for (const tag of serviceTags) {
+    await prisma.tag.upsert({
+      where: { name: tag.name },
+      update: {},
+      create: {
+        name: tag.name,
+        category: 'SERVICES',
+        icon: tag.icon,
+      },
+    })
+  }
+  console.log('✅ Tags de serviços case-na-praia criadas')
+
+  const artisanTags = [
+    { name: 'Artesanato Local', icon: 'Palette' },
+    { name: 'Ceramica', icon: 'CircleDot' },
+    { name: 'Moda Autoral', icon: 'Shirt' },
+    { name: 'Feiras', icon: 'Store' },
+  ]
+
+  for (const tag of artisanTags) {
+    await prisma.tag.upsert({
+      where: { name: tag.name },
+      update: {},
+      create: {
+        name: tag.name,
+        category: 'ARTISAN',
+        icon: tag.icon,
+      },
+    })
+  }
+  console.log('✅ Tags de artesanato criadas')
+
   // Criar templates de passeios
   const tourTemplates = [
     {
@@ -251,6 +291,20 @@ async function main() {
       title: 'Onde Comer?',
       images: [],
       details: 'Descubra os melhores restaurantes e bares da região',
+      active: true,
+    },
+    {
+      page: 'BUSINESS_SERVICES',
+      title: 'Servicos Case-na-Praia',
+      images: [],
+      details: 'Conheca fornecedores e servicos para eventos e experiencias na praia',
+      active: true,
+    },
+    {
+      page: 'BUSINESS_ARTISAN',
+      title: 'Artesanato',
+      images: [],
+      details: 'Conheca artesaos e trabalhos manuais locais de Sao Sebastiao',
       active: true,
     },
     {
